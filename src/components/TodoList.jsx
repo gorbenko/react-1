@@ -1,7 +1,7 @@
 import React from 'react';
 import TodoItem from './TodoItem';
 
-const TodoList = ({todos, title}) => {
+const TodoList = ({todos, title, removeCb}) => {
     return (
         <div>
             <h1>{title}</h1>
@@ -12,6 +12,7 @@ const TodoList = ({todos, title}) => {
                     number={index + 1}
                     title={item.title}
                     body={item.body}
+                    removeCb={removeCb}
                 />
             ))
             }

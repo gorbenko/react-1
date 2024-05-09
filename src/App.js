@@ -16,6 +16,10 @@ function App() {
     setTodos([...todos, todo]);
   }
 
+  const removeTodo = (id) => {
+    setTodos([...todos.filter(el => (el.id != id))]);
+  }
+
   return (
     <div className="App">
 
@@ -23,7 +27,7 @@ function App() {
       {/* <Counter/> */}
 
       <TodoForm createCb={addNewTodo} />
-      <TodoList todos={todos} title="Тудушки"/>
+      <TodoList removeCb={removeTodo} todos={todos} title="Тудушки"/>
     </div>
   );
 }
