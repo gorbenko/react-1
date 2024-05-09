@@ -6,9 +6,9 @@ const TodoItem = ({removeCb, ...props}) => {
     return (
         <div className={classes.TodoItem}>
             <h3>{props.number}</h3>
-            <h3>{props.title}</h3>
-            <h3>{props.body}</h3>
-            <SuperBtn onClick={removeCb.bind(this, props.id)}>Удалить</SuperBtn>
+            <h3>{props.item.title}</h3>
+            <h3>{props.item.body}</h3>
+            <SuperBtn onClick={removeCb.bind(this, props.item)}>Удалить</SuperBtn>
         </div>
     );
 };
