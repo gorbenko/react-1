@@ -1,19 +1,34 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import './App.css';
 import Counter from './components/Counter';
 import InputTitle from './components/InputTitle';
+import TodoFilter from './components/TodoFilter';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
-import SuperSelect from './components/UI/select/SuperSelect';
 
 function App() {
-  const [sortType, setSortType] = useState('');
+  const [filter, setFilter] = useState({ sort: '', query: '' });
 
   const [todos, setTodos] = useState([
     { id: 1, title: 'Встреча', body: '14:00 бульвар' },
     { id: 2, title: 'Еда', body: 'Обед по расписанию' },
     { id: 3, title: 'Стрижка', body: 'Красота спасет мир' },
   ]);
+
+  const sortedTodos = useMemo(() => {
+    console.log('отработала');
+    if (filter.sort !== '') {
+      return [...todos].sort((a, b) => a[filter.sort].localeCompare(b[filter.sort]));
+    }
+
+    return todos;
+  }, [filter.sort, todos]);
+
+  const sortedAndSearchTodos = useMemo(() => {
+    return sortedTodos.filter(todo => {
+      return todo.title.toLowerCase().includes(filter.query);
+    })
+  }, [filter.query, sortedTodos]);
 
   const addNewTodo = (todo) => {
     setTodos([...todos, todo]);
@@ -24,16 +39,6 @@ function App() {
     setTodos([...todos.filter(el => (el.id !== todo.id))]);
   }
 
-  const options = [
-    { value: 'title', text: 'Заголовок' },
-    { value: 'body', text: 'Содержимое' }
-  ];
-
-  const sortedTodos = (sortType) => {
-    setSortType(sortType);
-    setTodos([...todos].sort((a, b) => a[sortType].localeCompare(b[sortType])));
-  }
-
   return (
     <div className="App">
 
@@ -41,13 +46,12 @@ function App() {
       {/* <Counter/> */}
 
       <TodoForm createCb={addNewTodo} />
-      {todos.length > 0 ?
-        <>
-          <SuperSelect value={sortType} onChange={sortedTodos} defaultValue={'Сортировка'} options={options} />
-          <TodoList removeCb={removeTodo} todos={todos} title="Тудушки" />
-        </> :
-        <div>Дел нет</div>
-      }
+      <TodoFilter setFilter={setFilter} filter={filter} />
+      <TodoList
+            removeCb={removeTodo}
+            todos={sortedAndSearchTodos}
+            title="Тудушки"
+          />
     </div>
   );
 }
