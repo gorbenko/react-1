@@ -2,12 +2,15 @@ import React, { useMemo, useRef, useState } from 'react';
 import './App.css';
 import Counter from './components/Counter';
 import InputTitle from './components/InputTitle';
+import SuperModal from './components/SuperModal/SuperModal';
 import TodoFilter from './components/TodoFilter';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
+import SuperBtn from './components/UI/button/SuperBtn';
 
 function App() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
+  const [formVisible, setFormVisible] = useState(false);
 
   const [todos, setTodos] = useState([
     { id: 1, title: 'Встреча', body: '14:00 бульвар' },
@@ -32,6 +35,7 @@ function App() {
 
   const addNewTodo = (todo) => {
     setTodos([...todos, todo]);
+    setFormVisible(false);
   }
 
   const removeTodo = (todo) => {
@@ -45,7 +49,14 @@ function App() {
       {/* <InputTitle /> */}
       {/* <Counter/> */}
 
-      <TodoForm createCb={addNewTodo} />
+      <SuperBtn
+        onClick={() => setFormVisible(true)}
+      >
+        Добавить дело
+      </SuperBtn>
+      <SuperModal visible={formVisible} setVisible={setFormVisible}>
+        <TodoForm createCb={addNewTodo} />
+      </SuperModal>
       <TodoFilter setFilter={setFilter} filter={filter} />
       <TodoList
             removeCb={removeTodo}
