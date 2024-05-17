@@ -7,6 +7,7 @@ import TodoFilter from './components/TodoFilter';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 import SuperBtn from './components/UI/button/SuperBtn';
+import { useTodos } from './hooks/useTodos';
 
 function App() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
@@ -18,20 +19,7 @@ function App() {
     { id: 3, title: 'Стрижка', body: 'Красота спасет мир' },
   ]);
 
-  const sortedTodos = useMemo(() => {
-    console.log('отработала');
-    if (filter.sort !== '') {
-      return [...todos].sort((a, b) => a[filter.sort].localeCompare(b[filter.sort]));
-    }
-
-    return todos;
-  }, [filter.sort, todos]);
-
-  const sortedAndSearchTodos = useMemo(() => {
-    return sortedTodos.filter(todo => {
-      return todo.title.toLowerCase().includes(filter.query);
-    })
-  }, [filter.query, sortedTodos]);
+  const sortedAndSearchTodos = useTodos(todos, filter.sort, filter.query);
 
   const addNewTodo = (todo) => {
     setTodos([...todos, todo]);
