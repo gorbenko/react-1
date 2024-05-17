@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+
 import Counter from './components/Counter';
 import InputTitle from './components/InputTitle';
 import SuperModal from './components/SuperModal/SuperModal';
@@ -8,15 +8,19 @@ import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 import SuperBtn from './components/UI/button/SuperBtn';
 import { useTodos } from './hooks/useTodos';
+import TodoService from './API/TodoService';
+
+import './App.css';
 
 function App() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [formVisible, setFormVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [todos, setTodos] = useState([
-    { id: 1, title: 'Встреча', body: '14:00 бульвар' },
-    { id: 2, title: 'Еда', body: 'Обед по расписанию' },
-    { id: 3, title: 'Стрижка', body: 'Красота спасет мир' },
+    // { id: 1, title: 'Встреча', body: '14:00 бульвар' },
+    // { id: 2, title: 'Еда', body: 'Обед по расписанию' },
+    // { id: 3, title: 'Стрижка', body: 'Красота спасет мир' },
   ]);
 
   const sortedAndSearchTodos = useTodos(todos, filter.sort, filter.query);
@@ -31,12 +35,24 @@ function App() {
     setTodos([...todos.filter(el => (el.id !== todo.id))]);
   }
 
+  async function fetchTodos() {
+    setIsLoading(true);
+    const todos = await TodoService.getAll();
+    setTodos(todos);
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
   return (
     <div className="App">
 
       {/* <InputTitle /> */}
       {/* <Counter/> */}
 
+      <button onClick={fetchTodos}>GET TODOS</button>
       <SuperBtn
         onClick={() => setFormVisible(true)}
       >
@@ -46,11 +62,15 @@ function App() {
         <TodoForm createCb={addNewTodo} />
       </SuperModal>
       <TodoFilter setFilter={setFilter} filter={filter} />
-      <TodoList
-            removeCb={removeTodo}
-            todos={sortedAndSearchTodos}
-            title="Тудушки"
-          />
+      {
+        isLoading
+        ? <h1>Загрузка...</h1>
+        : <TodoList
+          removeCb={removeTodo}
+          todos={sortedAndSearchTodos}
+          title="Тудушки"
+        />
+      }
     </div>
   );
 }
