@@ -9,6 +9,8 @@ import TodoList from './components/TodoList';
 import SuperBtn from './components/UI/button/SuperBtn';
 import { useTodos } from './hooks/useTodos';
 import TodoService from './API/TodoService';
+import { store } from './store/store';
+import { save } from './store/actions';
 
 import './App.css';
 
@@ -24,6 +26,16 @@ function App() {
   ]);
 
   const sortedAndSearchTodos = useTodos(todos, filter.sort, filter.query);
+
+  console.info(store.getState());
+
+  function makeStore() {
+    store.dispatch(save('Oleg'));
+  }
+
+  store.subscribe(() => {
+    console.info(store.getState());
+  })
 
   const addNewTodo = (todo) => {
     setTodos([...todos, todo]);
@@ -42,9 +54,9 @@ function App() {
     setIsLoading(false);
   }
 
-  useEffect(() => {
-    fetchTodos();
-  }, []);
+  // useEffect(() => {
+  //   fetchTodos();
+  // }, []);
 
   return (
     <div className="App">
@@ -52,7 +64,7 @@ function App() {
       {/* <InputTitle /> */}
       {/* <Counter/> */}
 
-      <button onClick={fetchTodos}>GET TODOS</button>
+      <button onClick={makeStore}>GET TODOS</button>
       <SuperBtn
         onClick={() => setFormVisible(true)}
       >
