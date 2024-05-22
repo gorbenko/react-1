@@ -9,8 +9,8 @@ import TodoList from './components/TodoList';
 import SuperBtn from './components/UI/button/SuperBtn';
 import { useTodos } from './hooks/useTodos';
 import TodoService from './API/TodoService';
-import { store } from './store/store';
-import { save } from './store/actions';
+import { addCash, getCash } from './store/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 import './App.css';
 
@@ -20,22 +20,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [todos, setTodos] = useState([
-    // { id: 1, title: 'Встреча', body: '14:00 бульвар' },
-    // { id: 2, title: 'Еда', body: 'Обед по расписанию' },
-    // { id: 3, title: 'Стрижка', body: 'Красота спасет мир' },
+    { id: 1, title: 'Встреча', body: '14:00 бульвар' },
+    { id: 2, title: 'Еда', body: 'Обед по расписанию' },
+    { id: 3, title: 'Стрижка', body: 'Красота спасет мир' },
   ]);
 
   const sortedAndSearchTodos = useTodos(todos, filter.sort, filter.query);
-
-  console.info(store.getState());
-
-  function makeStore() {
-    store.dispatch(save('Oleg'));
-  }
-
-  store.subscribe(() => {
-    console.info(store.getState());
-  })
 
   const addNewTodo = (todo) => {
     setTodos([...todos, todo]);
@@ -58,13 +48,28 @@ function App() {
   //   fetchTodos();
   // }, []);
 
+  const dispatch = useDispatch();
+  const cash = useSelector(state => state.cash);
+
+  const addCashFn = (cash) => {
+    dispatch(addCash(cash));
+  }
+
+  const getCashFn = (cash) => {
+    dispatch(dispatch(getCash(cash)));
+  }
+
   return (
     <div className="App">
 
       {/* <InputTitle /> */}
       {/* <Counter/> */}
 
-      <button onClick={makeStore}>GET TODOS</button>
+      <strong>{cash}</strong>
+      <button onClick={() => addCashFn(Number(prompt()))}>ADD_CASH</button>
+      <button onClick={() => getCashFn(Number(prompt()))}>GET_CASH</button>
+
+      <hr />
       <SuperBtn
         onClick={() => setFormVisible(true)}
       >

@@ -1,4 +1,4 @@
 export const CONSTS = {
-    SAVE: 'save',
-    ACTION_2: 'action_2',
+    ADD_CASH: 'ADD_CASH',
+    GET_CASH: 'GET_CASH',
 }

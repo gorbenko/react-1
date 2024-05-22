@@ -1,8 +1,15 @@
 import { CONSTS } from './constants';
 
-export function save(value) {
+export function addCash(value) {
     return {
-        type: CONSTS.SAVE,
-        name: value,
+        type: CONSTS.ADD_CASH,
+        payload: value,
+    };
+}
+
+export function getCash(value) {
+    return {
+        type: CONSTS.GET_CASH,
+        payload: value,
     };
 }
