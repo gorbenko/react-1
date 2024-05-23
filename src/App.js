@@ -9,10 +9,12 @@ import TodoList from './components/TodoList';
 import SuperBtn from './components/UI/button/SuperBtn';
 import { useTodos } from './hooks/useTodos';
 import TodoService from './API/TodoService';
-import { addCash, getCash } from './store/actions';
 import { useDispatch, useSelector } from 'react-redux';
 
 import './App.css';
+import { addCashAction, getCashAction } from './store/cashReducer';
+import { addCustomerAction, removeCustomerAction } from './store/customerReducer';
+import { fetchCustomers } from './asyncAction/customers';
 
 function App() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
@@ -44,32 +46,62 @@ function App() {
     setIsLoading(false);
   }
 
-  // useEffect(() => {
-  //   fetchTodos();
-  // }, []);
+  useEffect(() => {
+    fetchTodos();
+  }, []);
 
   const dispatch = useDispatch();
-  const cash = useSelector(state => state.cash);
+  const cash = useSelector(state => state.cash.cash);
+  const customers = useSelector(state => state.customers.customers);
 
-  const addCashFn = (cash) => {
-    dispatch(addCash(cash));
+  const addCash = (cash) => {
+    dispatch(addCashAction(cash));
   }
 
-  const getCashFn = (cash) => {
-    dispatch(dispatch(getCash(cash)));
+  const getCash = (cash) => {
+    dispatch(getCashAction(cash));
+  }
+
+  const addCustomer = (name) => {
+    const customer = {
+      name,
+      id: Date.now()
+    }
+
+    dispatch(addCustomerAction(customer));
+  }
+
+  const removeCustomerFn = (customer) => {
+    dispatch(removeCustomerAction(customer.id));
   }
 
   return (
     <div className="App">
 
-      {/* <InputTitle /> */}
-      {/* <Counter/> */}
+      <InputTitle />
+      <Counter/>
 
       <strong>{cash}</strong>
-      <button onClick={() => addCashFn(Number(prompt()))}>ADD_CASH</button>
-      <button onClick={() => getCashFn(Number(prompt()))}>GET_CASH</button>
+      <button onClick={() => addCash(Number(prompt()))}>ADD_CASH</button>
+      <button onClick={() => getCash(Number(prompt()))}>GET_CASH</button>
+
+      <button onClick={() => addCustomer(prompt())}>ADD_CUSTOMER</button>
+      <button onClick={() => dispatch(fetchCustomers())}>ADD_MANY_CUSTOMERS</button>
+
+      {customers.length ?
+        <div>
+          {
+            customers.map(customer => {
+              return <div key={customer.id} onClick={() => removeCustomerFn(customer)} >{customer.name}</div>
+            })
+          }
+        </div>
+        : <div>Нет клиентов</div>
+
+      }
 
       <hr />
+      TODO:
       <SuperBtn
         onClick={() => setFormVisible(true)}
       >
